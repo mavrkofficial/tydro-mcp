@@ -1,0 +1,22 @@
+{
+  "name": "tydro-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for Tydro lending protocol on Ink — all 12 live reserves supported",
+  "type": "module",
+  "bin": {
+    "tydro-mcp": "./build/index.js"
+  },
+  "scripts": {
+    "build": "tsc && chmod +x build/index.js",
+    "dev": "tsc --watch",
+    "prepare": "npm run build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "ethers": "^6.13.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "typescript": "^5.7.2"
+  }
+}
