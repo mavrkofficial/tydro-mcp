@@ -1,15 +1,25 @@
 {
   "name": "tydro-mcp",
   "version": "1.0.0",
-  "description": "MCP server for Tydro lending protocol on Ink — all 12 live reserves supported",
+  "mcpName": "io.github.mavrkofficial/tydro",
+  "description": "MCP server for Tydro lending protocol on Ink — all 12 live reserves, production-ready",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mavrkofficial/tydro-mcp.git"
+  },
+  "homepage": "https://github.com/mavrkofficial/tydro-mcp",
+  "keywords": ["mcp", "tydro", "ink", "aave", "defi", "lending", "ethereum"],
+  "license": "MIT",
   "bin": {
-    "tydro-mcp": "./build/index.js"
+    "tydro-mcp": "./build/index.js",
+    "tydro-mcp-http": "./build/http.js"
   },
   "scripts": {
-    "build": "tsc && chmod +x build/index.js",
+    "build": "tsc && chmod +x build/index.js build/http.js",
     "dev": "tsc --watch",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.4",
@@ -18,5 +28,8 @@
   "devDependencies": {
     "@types/node": "^22.10.2",
     "typescript": "^5.7.2"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }
