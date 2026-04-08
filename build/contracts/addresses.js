@@ -1,10 +1,16 @@
 // ─── Tydro Contract Addresses ────────────────────────────────────────────────
 // All addresses verified on-chain from Tydro Pool.getReservesList()
 // Ink Mainnet (57073) · March 2026
+// Users can override the default Ink RPC endpoint by setting the TYDRO_RPC
+// environment variable (useful for private RPCs with higher rate limits or
+// better reliability — Gelato, Alchemy, QuickNode, etc.). Falls back to the
+// public Ink RPC when unset.
+const DEFAULT_MAINNET_RPC = 'https://rpc-gel.inkonchain.com';
+const DEFAULT_TESTNET_RPC = 'https://rpc-gel-sepolia.inkonchain.com';
 export const TYDRO_ADDRESSES = {
     mainnet: {
         chainId: 57073,
-        rpc: 'https://rpc-gel.inkonchain.com',
+        rpc: process.env.TYDRO_RPC ?? DEFAULT_MAINNET_RPC,
         contracts: {
             Pool: '0x2816cf15F6d2A220E789aA011D5EE4eB6c47FEbA',
             L2PoolInstance: '0x2aB3580a805fB10CbAd567212C70e26C1B6769eC',
@@ -32,7 +38,11 @@ export const TYDRO_ADDRESSES = {
     },
     testnet: {
         chainId: 763373,
-        rpc: 'https://rpc-gel-sepolia.inkonchain.com',
+        // TYDRO_RPC also overrides the testnet endpoint when TYDRO_NETWORK=testnet
+        // is used. Testnet support is not wired up yet (see src/index.ts and
+        // src/http.ts which both throw on testnet), but documenting the override
+        // here for when it comes online.
+        rpc: process.env.TYDRO_RPC ?? DEFAULT_TESTNET_RPC,
         contracts: {
         // Testnet addresses not yet configured — contributions welcome
         // See https://docs.tydro.com for testnet deployment info
