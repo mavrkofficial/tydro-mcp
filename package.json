@@ -2,7 +2,7 @@
   "name": "tydro-mcp",
   "version": "1.1.0",
   "mcpName": "io.github.mavrkofficial/tydro",
-  "description": "MCP server for Tydro lending protocol on Ink — all 12 live reserves. Read/write access for AI agents. Part of the Ink agent tooling stack alongside inkonchain-mcp and @nadohq/nado-mcp.",
+  "description": "MCP server for Tydro lending protocol on Ink — all 12 live reserves. Read/write access for AI agents.",
   "type": "module",
   "repository": {
     "type": "git",

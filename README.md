@@ -5,24 +5,6 @@
 
 **The Tydro lending protocol MCP server** — gives any MCP-compatible AI agent (Claude Code, Cursor, Claude Desktop, Windsurf, VS Code, OpenClaw, etc.) live read + write access to all 12 [Tydro](https://app.tydro.com) reserves on [Ink](https://inkonchain.com). Tydro is an Aave V3 whitelabel, so everything you know about Aave V3 lending works here: supply, borrow, repay, withdraw, health factors, liquidation thresholds, variable-rate debt.
 
-Part of the **Ink agent tooling stack** alongside [`inkonchain-mcp`](https://www.npmjs.com/package/inkonchain-mcp) and [`@nadohq/nado-mcp`](https://www.npmjs.com/package/@nadohq/nado-mcp):
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                  Ink Agent Tooling Stack                    │
-├─────────────────┬──────────────────┬────────────────────────┤
-│  inkonchain-mcp │   tydro-mcp      │   @nadohq/nado-mcp     │
-│                 │                  │                        │
-│  Sentry / Tsu-  │  Tydro lending   │  NADO perpetuals +     │
-│  nami / ZNS /   │  (Aave V3 on     │  spot DEX (Vertex on   │
-│  ERC-8004 /     │  Ink) — this     │  Ink)                  │
-│  DailyGM /      │  package         │                        │
-│  Relay / utils  │                  │                        │
-└─────────────────┴──────────────────┴────────────────────────┘
-```
-
-Install any combination. The three MCPs are designed to coexist with zero tool name collisions — install all three and your agent gets the full Ink DeFi surface area in one session.
-
 > [!CAUTION]
 > Experimental software. Interacts with the live Tydro lending pool on the Ink blockchain and can execute real financial transactions including supplies, borrows, repays, and withdrawals. Read the [Security](#security--key-management) section before using with real funds or AI agents.
 
@@ -40,7 +22,6 @@ Install any combination. The three MCPs are designed to coexist with zero tool n
 - [Example Prompts](#example-prompts)
 - [Notes](#notes)
 - [Contracts](#contracts-ink-mainnet)
-- [The Ink Agent Tooling Stack](#the-ink-agent-tooling-stack)
 - [Development](#development)
 - [Disclaimer](#disclaimer)
 
@@ -320,39 +301,6 @@ Add to your `claude_desktop_config.json`:
 
 Any client that supports the standard MCP `stdio` transport. The command is always `npx tydro-mcp` with `PRIVATE_KEY` in the env block.
 
-### Running the full Ink stack
-
-Want all the Ink tooling in one session? Add all three MCPs:
-
-```json
-{
-  "mcpServers": {
-    "inkonchain": {
-      "command": "npx",
-      "args": ["inkonchain-mcp"]
-    },
-    "tydro": {
-      "command": "npx",
-      "args": ["tydro-mcp"],
-      "env": {
-        "PRIVATE_KEY": "0xYOUR_DEV_WALLET_PRIVATE_KEY"
-      }
-    },
-    "nado": {
-      "command": "npx",
-      "args": ["@nadohq/nado-mcp"],
-      "env": {
-        "DATA_ENV": "nadoMainnet",
-        "PRIVATE_KEY": "0xYOUR_LINKED_SIGNER_KEY",
-        "SUBACCOUNT_OWNER": "0xYOUR_MAIN_WALLET"
-      }
-    }
-  }
-}
-```
-
-All three coexist with zero tool name collisions. Your agent gets the full Ink DeFi surface area in one session.
-
 ---
 
 ## HTTP/SSE Transport
@@ -450,7 +398,7 @@ Write tools (`supply`, `borrow`, `repay`, `withdraw`) will return a clear error 
 - **Liquidate other users.** Not exposed as a tool. Use the Tydro frontend or contract directly.
 - **Flashloans.** Not exposed as a tool.
 - **Set emode category.** Use the Tydro frontend.
-- **Access anything outside Tydro.** For Tsunami, Sentry, ZNS, or Relay, install [`inkonchain-mcp`](https://www.npmjs.com/package/inkonchain-mcp). For NADO perps, install [`@nadohq/nado-mcp`](https://www.npmjs.com/package/@nadohq/nado-mcp).
+- **Anything outside Tydro.** This server is purposefully scoped to the Tydro lending pool — no swaps, no cross-chain bridging, no token launches.
 
 ---
 
@@ -489,8 +437,8 @@ These work out of the box with Claude Code, Claude Desktop, or any MCP-compatibl
 ### Liquidation monitor
 > "Check these three wallets on Tydro and flag any with a health factor below 1.5: `0x...`, `0x...`, `0x...`"
 
-### Leveraged long ETH (cross-protocol)
-> "Using Tydro, supply 0.1 WETH as collateral, borrow $100 of USDT0 against it, then tell me what my new health factor is and how much more USDT0 I could safely borrow." *(Combine with `inkonchain-mcp` to then swap the borrowed USDT0 back into more WETH via Tsunami or Relay.)*
+### Leveraged long setup
+> "Using Tydro, supply 0.1 WETH as collateral, borrow $100 of USDT0 against it, then tell me what my new health factor is and how much more USDT0 I could safely borrow."
 
 ### Yield carry check
 > "Look up my current Tydro position and compute my net interest — how much am I earning per year on my supply positions minus what I'm paying on my borrows?"
@@ -518,47 +466,6 @@ These work out of the box with Claude Code, Claude Desktop, or any MCP-compatibl
 | UIPoolDataProvider | `0x39bc1bfDa2130d6Bb6DBEfd366939b4c7aa7C697` |
 | Oracle | `0x4758213271BFdC72224A7a8742dC865fC97756e1` |
 | WETHGateway | `0xDe090EfCD6ef4b86792e2D84E55a5fa8d49D25D2` |
-
----
-
-## The Ink Agent Tooling Stack
-
-`tydro-mcp` is the **lending** layer. For full Ink ecosystem coverage, pair it with:
-
-### [inkonchain-mcp](https://www.npmjs.com/package/inkonchain-mcp)
-The curated Ink ecosystem primitives — Sentry Launch Factory (permissionless + agent-gated token launches), Tsunami V3 DEX, ERC-8004 agent identity, ZNS `.ink` domains, DailyGM, Tsunami subgraph analytics, Relay cross-chain swaps, and ERC20/WETH utilities. ~54 tools across 8 modules. Maintained by MAVRK.
-
-```json
-{ "inkonchain": { "command": "npx", "args": ["inkonchain-mcp"] } }
-```
-
-### [@nadohq/nado-mcp](https://www.npmjs.com/package/@nadohq/nado-mcp)
-Nado is a perpetuals and spot DEX on Ink, powered by the Vertex Protocol engine. Up to 20x leverage on a central limit order book. 38 tools including linked-signer support. Maintained by the Nado team (Ink Foundation).
-
-```json
-{
-  "nado": {
-    "command": "npx",
-    "args": ["@nadohq/nado-mcp"],
-    "env": {
-      "DATA_ENV": "nadoMainnet",
-      "PRIVATE_KEY": "0xYOUR_LINKED_SIGNER",
-      "SUBACCOUNT_OWNER": "0xYOUR_MAIN_WALLET"
-    }
-  }
-}
-```
-
-### Cross-protocol workflows
-
-The real power shows up when you combine them. A few examples an agent can execute end-to-end once all three are installed:
-
-- **Leveraged long ETH**: Supply WETH to Tydro → borrow USDC against it → swap USDC back to WETH via Tsunami (`inkonchain-mcp`) → supply the new WETH to Tydro → repeat. Effective 2-3x leverage on ETH exposure.
-- **Stablecoin carry trade**: Supply stables to Tydro to earn yield, borrow kBTC at cheap rates (BTC borrow demand is typically low), sell the kBTC for more stables on Tsunami, supply those stables. Profitable as long as the Tydro stable supply APY > kBTC borrow APY + slippage.
-- **Delta-neutral perp hedge**: Supply WETH to Tydro → borrow USDC → open an ETH short on NADO (`@nadohq/nado-mcp`) sized to your supplied WETH notional. Earn supply yield on WETH + (optionally) positive funding on the short, while being net-delta-neutral.
-- **Bridge → supply**: Bridge ETH from Base/Arbitrum to Ink via Relay Protocol (`inkonchain-mcp`'s `relay_execute`), then immediately supply the arrived WETH to Tydro to earn yield.
-
-None of these workflows require custom code — just a well-prompted agent with the three MCPs connected.
 
 ---
 
