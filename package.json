@@ -16,7 +16,7 @@
     "tydro-mcp-http": "./build/http.js"
   },
   "scripts": {
-    "build": "tsc && chmod +x build/index.js build/http.js",
+    "build": "tsc",
     "dev": "tsc --watch",
     "prepare": "npm run build",
     "typecheck": "tsc --noEmit"
