@@ -12,8 +12,8 @@
   "keywords": ["mcp", "tydro", "ink", "aave", "defi", "lending", "ethereum"],
   "license": "MIT",
   "bin": {
-    "tydro-mcp": "./build/index.js",
-    "tydro-mcp-http": "./build/http.js"
+    "tydro-mcp": "build/index.js",
+    "tydro-mcp-http": "build/http.js"
   },
   "scripts": {
     "build": "tsc",
